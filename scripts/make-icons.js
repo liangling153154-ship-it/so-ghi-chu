@@ -62,11 +62,11 @@ function roundRectDist(x, y, rx, ry, rw, rh, rad) {
 
 function drawIcon(size) {
   const px = Buffer.alloc(size * size * 4);
-  const BG = [15, 118, 110];      // #0f766e
-  const BG2 = [13, 148, 136];     // #0d9488 (gradient nhẹ)
+  const BG = [124, 83, 20];       // #7c5314 brand-deep
+  const BG2 = [154, 106, 31];     // #9a6a1f brand (gradient nhẹ)
   const CARD = [255, 255, 255];
-  const LINE = [94, 234, 212];    // #5eead4
-  const TITLE = [15, 118, 110];
+  const LINE = [236, 208, 160];   // honey nhạt
+  const TITLE = [154, 106, 31];   // #9a6a1f
 
   const u = size / 100; // đơn vị tỉ lệ
   const card = { x: 24 * u, y: 20 * u, w: 52 * u, h: 60 * u, r: 6 * u };

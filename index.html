@@ -4,19 +4,28 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Kho ghi chú</title>
-  <meta name="theme-color" content="#0f766e">
+  <meta name="theme-color" content="#ffffff">
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="icon" href="/icons/icon-192.png">
   <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
 
-  <!-- Màn hình trạng thái (loading / lỗi) -->
+  <!-- Màn hình trạng thái: skeleton khi tải, chữ khi lỗi -->
   <div id="status-screen" class="status-screen">
-    <div class="status-card">
+    <div id="skeleton" class="skeleton" aria-hidden="true">
+      <div class="sk-bar sk-header"></div>
+      <div class="sk-chips">
+        <div class="sk-bar"></div><div class="sk-bar"></div><div class="sk-bar"></div>
+      </div>
+      <div class="sk-bar sk-item"></div>
+      <div class="sk-bar sk-item"></div>
+      <div class="sk-bar sk-item"></div>
+    </div>
+    <div id="status-card" class="status-card" hidden>
       <div id="status-icon" class="status-icon">⏳</div>
       <p id="status-text">Đang mở kho ghi chú…</p>
     </div>
@@ -26,6 +35,13 @@
   <div id="app" class="app" hidden>
     <header class="app-header">
       <div class="app-header-inner">
+        <span class="brand-mark" aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <rect x="1" y="1" width="12" height="2.6" rx="1.3" fill="#fff"/>
+            <rect x="1" y="5.7" width="12" height="2.6" rx="1.3" fill="#fff" opacity=".75"/>
+            <rect x="1" y="10.4" width="8" height="2.6" rx="1.3" fill="#fff" opacity=".55"/>
+          </svg>
+        </span>
         <h1 id="space-name">…</h1>
         <span class="app-sub">Kho ghi chú</span>
       </div>
@@ -36,15 +52,27 @@
     <main id="note-list" class="note-list"></main>
 
     <div id="empty-state" class="empty-state" hidden>
-      <div class="empty-emoji">🗒️</div>
-      <p>Chưa có ghi chú nào.<br>Bấm <strong>+ Thêm</strong> để tạo ghi chú đầu tiên.</p>
+      <svg width="52" height="52" viewBox="0 0 52 52" fill="none" aria-hidden="true">
+        <rect x="8" y="6" width="36" height="40" rx="6" fill="#f7f4f0"/>
+        <rect x="15" y="15" width="16" height="4" rx="2" fill="#9a6a1f"/>
+        <rect x="15" y="24" width="22" height="3.4" rx="1.7" fill="#e5e1da"/>
+        <rect x="15" y="31" width="22" height="3.4" rx="1.7" fill="#e5e1da"/>
+        <rect x="15" y="38" width="14" height="3.4" rx="1.7" fill="#e5e1da"/>
+      </svg>
+      <p>Chưa có ghi chú nào.<br>Bấm <strong>Thêm ghi chú</strong> để lưu mẫu tin nhắn, mã QR hay link đầu tiên.</p>
     </div>
 
-    <button id="add-btn" class="fab" aria-label="Thêm ghi chú">＋ Thêm</button>
+    <button id="add-btn" class="fab">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+      </svg>
+      Thêm ghi chú
+    </button>
   </div>
 
-  <!-- Form thêm / sửa ghi chú -->
+  <!-- Bottom sheet thêm / sửa ghi chú -->
   <dialog id="note-dialog" class="note-dialog">
+    <div class="grabber" aria-hidden="true"></div>
     <form id="note-form" method="dialog">
       <h2 id="dialog-title">Thêm ghi chú</h2>
 
@@ -99,7 +127,11 @@
         var el = document.getElementById("status-text");
         var icon = document.getElementById("status-icon");
         var screen = document.getElementById("status-screen");
+        var card = document.getElementById("status-card");
+        var sk = document.getElementById("skeleton");
         if (el && screen && !screen.hidden) {
+          if (sk) sk.hidden = true;
+          if (card) card.hidden = false;
           if (icon) icon.textContent = "⚠️";
           el.innerHTML = "Có lỗi khi mở app:<br><small>" + msg + "</small><br>Hãy chụp màn hình này gửi người quản lý.";
         }
@@ -114,10 +146,7 @@
         var app = document.getElementById("app");
         var screen = document.getElementById("status-screen");
         if (app && app.hidden && screen && !screen.hidden) {
-          var el = document.getElementById("status-text");
-          if (el && el.textContent.indexOf("Đang mở") !== -1) {
-            report("mở quá lâu — mạng chậm hoặc bị chặn. Thử tắt hẳn trình duyệt rồi mở lại link.");
-          }
+          report("mở quá lâu — mạng chậm hoặc bị chặn. Thử tắt hẳn trình duyệt rồi mở lại link.");
         }
       }, 12000);
     })();

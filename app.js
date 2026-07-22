@@ -26,7 +26,17 @@
 
   function $(id) { return document.getElementById(id); }
 
+  // Bộ icon SVG dùng chung (chuỗi tĩnh, an toàn với innerHTML)
+  var ICONS = {
+    copy: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2.5" stroke="currentColor" stroke-width="2"/><path d="M5.5 15H5a2.5 2.5 0 0 1-2.5-2.5v-7A2.5 2.5 0 0 1 5 3h7a2.5 2.5 0 0 1 2.5 2.5V6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+    image: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2.5" stroke="currentColor" stroke-width="2"/><circle cx="9" cy="10" r="1.8" fill="currentColor"/><path d="M4 18l5-5 3.5 3.5L17 12l3 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    edit: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 20h4l11-11a2.4 2.4 0 0 0-4-4L4 16v4z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>',
+    trash: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 6h16M9 6V4.5A1.5 1.5 0 0 1 10.5 3h3A1.5 1.5 0 0 1 15 4.5V6m3 0v13a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+  };
+
   function showStatus(icon, text) {
+    $("skeleton").hidden = true;
+    $("status-card").hidden = false;
     $("status-icon").textContent = icon;
     $("status-text").innerHTML = text;
     $("status-screen").hidden = false;
@@ -208,12 +218,6 @@
       }
       top.appendChild(titleWrap);
 
-      var editBtn = document.createElement("button");
-      editBtn.className = "icon-btn";
-      editBtn.textContent = "✏️";
-      editBtn.setAttribute("aria-label", "Sửa ghi chú");
-      editBtn.onclick = function () { openDialog(note); };
-      top.appendChild(editBtn);
       card.appendChild(top);
 
       if ((note.content || "").trim()) {
@@ -239,7 +243,7 @@
       if ((note.content || "").trim()) {
         var copyBtn = document.createElement("button");
         copyBtn.className = "btn-copy";
-        copyBtn.textContent = "📋 Chép";
+        copyBtn.innerHTML = ICONS.copy + "<span>Chép</span>";
         copyBtn.onclick = function () {
           copyText(note.content).then(
             function () { toast("Đã chép vào bộ nhớ tạm"); },
@@ -252,14 +256,26 @@
       if (note.image_path) {
         var viewBtn = document.createElement("button");
         viewBtn.className = "btn-small";
-        viewBtn.textContent = "🖼️ Xem ảnh";
+        viewBtn.innerHTML = ICONS.image + "<span>Xem ảnh</span>";
         viewBtn.onclick = function () { openLightbox(note); };
         actions.appendChild(viewBtn);
       }
 
+      var spacer = document.createElement("div");
+      spacer.className = "spacer";
+      actions.appendChild(spacer);
+
+      var editBtn = document.createElement("button");
+      editBtn.className = "icon-btn";
+      editBtn.innerHTML = ICONS.edit;
+      editBtn.setAttribute("aria-label", "Sửa ghi chú");
+      editBtn.onclick = function () { openDialog(note); };
+      actions.appendChild(editBtn);
+
       var delBtn = document.createElement("button");
-      delBtn.className = "btn-small btn-danger";
-      delBtn.textContent = "Xóa";
+      delBtn.className = "icon-btn btn-danger";
+      delBtn.innerHTML = ICONS.trash;
+      delBtn.setAttribute("aria-label", "Xóa ghi chú");
       delBtn.onclick = function () { deleteNote(note); };
       actions.appendChild(delBtn);
 
