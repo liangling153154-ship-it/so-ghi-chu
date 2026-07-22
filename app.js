@@ -483,7 +483,7 @@
 
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", function () {
-      navigator.serviceWorker.register("sw.js").catch(function () { /* bỏ qua */ });
+      navigator.serviceWorker.register("/sw.js").catch(function () { /* bỏ qua */ });
     });
   }
 

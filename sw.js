@@ -1,15 +1,15 @@
 // Service worker: cache app shell để mở nhanh; dữ liệu Supabase luôn lấy từ mạng
-var CACHE = "kho-ghi-chu-v3";
+var CACHE = "kho-ghi-chu-v4";
 var SHELL = [
-  "./",
-  "index.html",
-  "styles.css",
-  "app.js",
-  "config.js",
-  "vendor/supabase.js",
-  "manifest.webmanifest",
-  "icons/icon-192.png",
-  "icons/icon-512.png",
+  "/",
+  "/index.html",
+  "/styles.css",
+  "/app.js",
+  "/config.js",
+  "/vendor/supabase.js",
+  "/manifest.webmanifest",
+  "/icons/icon-192.png",
+  "/icons/icon-512.png",
 ];
 
 self.addEventListener("install", function (ev) {
@@ -39,7 +39,7 @@ self.addEventListener("fetch", function (ev) {
   if (ev.request.mode === "navigate") {
     ev.respondWith(
       fetch(ev.request).catch(function () {
-        return caches.match("index.html");
+        return caches.match("/index.html");
       })
     );
     return;
