@@ -91,7 +91,38 @@
 
   <div id="toast" class="toast" hidden></div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script>
+    // Lưới an toàn: mọi lỗi JS đều hiện lên màn hình thay vì kẹt im lặng,
+    // và nếu sau 12 giây vẫn chưa vào được app thì báo rõ cho người dùng.
+    (function () {
+      function report(msg) {
+        var el = document.getElementById("status-text");
+        var icon = document.getElementById("status-icon");
+        var screen = document.getElementById("status-screen");
+        if (el && screen && !screen.hidden) {
+          if (icon) icon.textContent = "⚠️";
+          el.innerHTML = "Có lỗi khi mở app:<br><small>" + msg + "</small><br>Hãy chụp màn hình này gửi người quản lý.";
+        }
+      }
+      window.addEventListener("error", function (e) {
+        report((e.message || "lỗi không rõ") + (e.filename ? "<br>" + e.filename.split("/").pop() + ":" + e.lineno : ""));
+      });
+      window.addEventListener("unhandledrejection", function (e) {
+        report(e.reason && e.reason.message ? e.reason.message : "lỗi kết nối không rõ");
+      });
+      setTimeout(function () {
+        var app = document.getElementById("app");
+        var screen = document.getElementById("status-screen");
+        if (app && app.hidden && screen && !screen.hidden) {
+          var el = document.getElementById("status-text");
+          if (el && el.textContent.indexOf("Đang mở") !== -1) {
+            report("mở quá lâu — mạng chậm hoặc bị chặn. Thử tắt hẳn trình duyệt rồi mở lại link.");
+          }
+        }
+      }, 12000);
+    })();
+  </script>
+  <script src="vendor/supabase.js"></script>
   <script src="config.js"></script>
   <script src="app.js"></script>
 </body>

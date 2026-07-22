@@ -1,11 +1,12 @@
 // Service worker: cache app shell để mở nhanh; dữ liệu Supabase luôn lấy từ mạng
-var CACHE = "kho-ghi-chu-v2";
+var CACHE = "kho-ghi-chu-v3";
 var SHELL = [
   "./",
   "index.html",
   "styles.css",
   "app.js",
   "config.js",
+  "vendor/supabase.js",
   "manifest.webmanifest",
   "icons/icon-192.png",
   "icons/icon-512.png",
