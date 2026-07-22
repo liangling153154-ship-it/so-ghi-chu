@@ -1,0 +1,13 @@
+{
+  "name": "kho-ghi-chu",
+  "version": "1.0.0",
+  "description": "Kho ghi chú cá nhân hóa — sổ tay số mobile-first, mỗi người 1 link riêng",
+  "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "icons": "node scripts/make-icons.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

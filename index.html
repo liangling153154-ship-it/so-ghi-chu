@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Kho ghi chú</title>
+  <meta name="theme-color" content="#0f766e">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Màn hình trạng thái (loading / lỗi) -->
+  <div id="status-screen" class="status-screen">
+    <div class="status-card">
+      <div id="status-icon" class="status-icon">⏳</div>
+      <p id="status-text">Đang mở kho ghi chú…</p>
+    </div>
+  </div>
+
+  <!-- Màn hình chính -->
+  <div id="app" class="app" hidden>
+    <header class="app-header">
+      <div class="app-header-inner">
+        <h1 id="space-name">…</h1>
+        <span class="app-sub">Kho ghi chú</span>
+      </div>
+    </header>
+
+    <nav id="category-bar" class="category-bar" aria-label="Phân loại"></nav>
+
+    <main id="note-list" class="note-list"></main>
+
+    <div id="empty-state" class="empty-state" hidden>
+      <div class="empty-emoji">🗒️</div>
+      <p>Chưa có ghi chú nào.<br>Bấm <strong>+ Thêm</strong> để tạo ghi chú đầu tiên.</p>
+    </div>
+
+    <button id="add-btn" class="fab" aria-label="Thêm ghi chú">＋ Thêm</button>
+  </div>
+
+  <!-- Form thêm / sửa ghi chú -->
+  <dialog id="note-dialog" class="note-dialog">
+    <form id="note-form" method="dialog">
+      <h2 id="dialog-title">Thêm ghi chú</h2>
+
+      <label>
+        Tiêu đề <span class="req">*</span>
+        <input type="text" id="f-title" required maxlength="200" placeholder="VD: QR chuyển khoản Sen's">
+      </label>
+
+      <label>
+        Nội dung (để chép nhanh)
+        <textarea id="f-content" rows="4" placeholder="VD: mẫu tin nhắn chào khách, số tài khoản, link web…"></textarea>
+      </label>
+
+      <label>
+        Phân loại
+        <input type="text" id="f-category" list="category-options" maxlength="50" placeholder="VD: Sen's Homestay, Hòa An…">
+        <datalist id="category-options"></datalist>
+      </label>
+
+      <label class="file-label">
+        Ảnh đính kèm
+        <input type="file" id="f-image" accept="image/*">
+      </label>
+      <div id="image-preview-wrap" class="image-preview-wrap" hidden>
+        <img id="image-preview" alt="Ảnh xem trước">
+        <button type="button" id="remove-image-btn" class="btn-small btn-danger">Bỏ ảnh</button>
+      </div>
+
+      <div class="dialog-actions">
+        <button type="button" id="cancel-btn" class="btn btn-ghost">Hủy</button>
+        <button type="submit" id="save-btn" class="btn btn-primary">Lưu</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Xem ảnh phóng to -->
+  <dialog id="lightbox" class="lightbox">
+    <img id="lightbox-img" alt="Ảnh ghi chú">
+    <div class="lightbox-actions">
+      <a id="lightbox-download" class="btn btn-ghost" download target="_blank" rel="noopener">Tải ảnh</a>
+      <button type="button" id="lightbox-close" class="btn btn-primary">Đóng</button>
+    </div>
+  </dialog>
+
+  <div id="toast" class="toast" hidden></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

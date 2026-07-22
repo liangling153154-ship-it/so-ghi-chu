@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tạo kho ghi chú mới</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="admin-wrap">
+    <h1>🔑 Tạo kho ghi chú mới</h1>
+    <p class="hint">
+      Trang này dành cho người quản lý app: nhập tên hiển thị cho không gian mới
+      (VD: "Lễ tân Sen's"), hệ thống sẽ sinh link riêng để gửi cho người dùng.
+    </p>
+
+    <div class="admin-card">
+      <form id="create-form">
+        <label>
+          Tên hiển thị
+          <input type="text" id="space-name-input" required maxlength="100" placeholder="VD: Lễ tân Sen's">
+        </label>
+        <button type="submit" class="btn btn-primary" id="create-btn">Tạo link mới</button>
+      </form>
+      <div id="result" class="result-link" hidden></div>
+    </div>
+
+    <p class="hint" style="margin-top:20px">
+      Gửi link cho người dùng qua Zalo/Messenger. Họ mở link là vào thẳng kho của mình —
+      nên hướng dẫn họ bấm <strong>"Thêm vào màn hình chính"</strong> để dùng như app.
+    </p>
+  </div>
+
+  <div id="toast" class="toast" hidden></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="config.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
