@@ -7,6 +7,12 @@
   var cfg = window.KHO_CONFIG || {};
   var sb = null;
 
+  // Thư viện supabase-js bản UMD gắn vào globalThis.supabase (bản cũ: window.supabase)
+  function supabaseLib() {
+    var g = (typeof globalThis !== "undefined" ? globalThis : window);
+    return g.supabase || window.supabase || null;
+  }
+
   var state = {
     token: null,
     space: null,
@@ -406,7 +412,12 @@
       showStatus("⚙️", "App chưa được cấu hình.<br>Hãy điền thông tin Supabase vào <code>config.js</code>.");
       return;
     }
-    sb = window.supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY);
+    var lib = supabaseLib();
+    if (!lib || typeof lib.createClient !== "function") {
+      showStatus("📡", "Không tải được thư viện kết nối.<br>Kiểm tra mạng rồi tải lại trang.");
+      return;
+    }
+    sb = lib.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY);
 
     state.token = getToken();
     if (!state.token) {
@@ -476,5 +487,9 @@
     });
   }
 
-  init();
+  // Bọc init để mọi lỗi bất ngờ đều hiện thông báo, không đứng im ở màn hình chờ
+  init().catch(function (e) {
+    console.error(e);
+    showStatus("⚠️", "Có lỗi khi mở kho ghi chú.<br>Hãy tải lại trang.");
+  });
 })();

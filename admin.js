@@ -2,7 +2,9 @@
   "use strict";
 
   var cfg = window.KHO_CONFIG || {};
-  var sb = window.supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY);
+  // Bản UMD mới gắn thư viện vào globalThis.supabase (bản cũ: window.supabase)
+  var lib = (typeof globalThis !== "undefined" && globalThis.supabase) || window.supabase;
+  var sb = lib.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY);
 
   function randomToken() {
     var bytes = new Uint8Array(12);
