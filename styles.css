@@ -194,14 +194,18 @@ button { font-family: inherit; }
 /* ===== Danh sách ghi chú ===== */
 
 .note-list {
-  padding: 6px var(--pad-x) 0;
+  padding: 8px var(--pad-x) 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .note-card {
-  padding: 16px 0 18px;
-  border-bottom: 1px solid var(--line);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--r-block);
+  padding: 14px 14px 16px;
 }
-.note-card:last-child { border-bottom: none; }
 
 .note-card-top {
   display: flex;
