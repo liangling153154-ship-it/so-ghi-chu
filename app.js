@@ -30,6 +30,7 @@
   var ICONS = {
     copy: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2.5" stroke="currentColor" stroke-width="2"/><path d="M5.5 15H5a2.5 2.5 0 0 1-2.5-2.5v-7A2.5 2.5 0 0 1 5 3h7a2.5 2.5 0 0 1 2.5 2.5V6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
     image: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2.5" stroke="currentColor" stroke-width="2"/><circle cx="9" cy="10" r="1.8" fill="currentColor"/><path d="M4 18l5-5 3.5 3.5L17 12l3 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    copyImage: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2.5" stroke="currentColor" stroke-width="2"/><circle cx="12.6" cy="12.8" r="1.3" fill="currentColor"/><path d="M9.4 19.5l3.3-3.3 2.6 2.6 2-2 3.4 3.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.5 15H5a2.5 2.5 0 0 1-2.5-2.5v-7A2.5 2.5 0 0 1 5 3h7a2.5 2.5 0 0 1 2.5 2.5V6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
     edit: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 20h4l11-11a2.4 2.4 0 0 0-4-4L4 16v4z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>',
     trash: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 6h16M9 6V4.5A1.5 1.5 0 0 1 10.5 3h3A1.5 1.5 0 0 1 15 4.5V6m3 0v13a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
   };
@@ -91,6 +92,51 @@
         ta.remove();
       }
     });
+  }
+
+  // Chép ảnh vào bộ nhớ tạm để dán thẳng vào Zalo/Messenger.
+  // Clipboard chỉ nhận PNG, nên ảnh JPEG phải vẽ lại qua canvas.
+  // Safari đòi ClipboardItem nhận Promise ngay trong cử chỉ chạm, không được await trước.
+  function canCopyImage() {
+    return !!(navigator.clipboard && window.ClipboardItem && window.isSecureContext);
+  }
+
+  function fetchAsPngBlob(url) {
+    return fetch(url, { mode: "cors" })
+      .then(function (r) {
+        if (!r.ok) throw new Error("tải ảnh thất bại");
+        return r.blob();
+      })
+      .then(function (blob) {
+        if (blob.type === "image/png") return blob;
+        return new Promise(function (resolve, reject) {
+          var img = new Image();
+          img.crossOrigin = "anonymous";
+          var objUrl = URL.createObjectURL(blob);
+          img.onload = function () {
+            URL.revokeObjectURL(objUrl);
+            var canvas = document.createElement("canvas");
+            canvas.width = img.naturalWidth;
+            canvas.height = img.naturalHeight;
+            canvas.getContext("2d").drawImage(img, 0, 0);
+            canvas.toBlob(function (png) {
+              png ? resolve(png) : reject(new Error("chuyển PNG thất bại"));
+            }, "image/png");
+          };
+          img.onerror = function () {
+            URL.revokeObjectURL(objUrl);
+            reject(new Error("đọc ảnh thất bại"));
+          };
+          img.src = objUrl;
+        });
+      });
+  }
+
+  function copyImage(note) {
+    var url = publicImageUrl(note.image_path);
+    // Truyền thẳng Promise vào ClipboardItem — bắt buộc với Safari/iOS
+    var item = new window.ClipboardItem({ "image/png": fetchAsPngBlob(url) });
+    return navigator.clipboard.write([item]);
   }
 
   // Thu nhỏ ảnh trước khi upload để tiết kiệm dung lượng free tier
@@ -254,11 +300,32 @@
       }
 
       if (note.image_path) {
-        var viewBtn = document.createElement("button");
-        viewBtn.className = "btn-small";
-        viewBtn.innerHTML = ICONS.image + "<span>Xem ảnh</span>";
-        viewBtn.onclick = function () { openLightbox(note); };
-        actions.appendChild(viewBtn);
+        if (canCopyImage()) {
+          var copyImgBtn = document.createElement("button");
+          copyImgBtn.className = "btn-copy";
+          copyImgBtn.innerHTML = ICONS.copyImage + "<span>Chép ảnh</span>";
+          copyImgBtn.onclick = function () {
+            copyImgBtn.disabled = true;
+            copyImage(note).then(
+              function () { toast("Đã chép ảnh — dán vào Zalo được rồi"); },
+              function (e) {
+                console.error(e);
+                toast("Không chép được ảnh — thử bấm Xem ảnh rồi giữ để lưu");
+              }
+            ).then(function () { copyImgBtn.disabled = false; });
+          };
+          actions.appendChild(copyImgBtn);
+        }
+
+        // Không có nút "Xem ảnh": bấm thẳng vào ảnh là xem được,
+        // bớt một nút để hàng hành động luôn đọc rõ.
+        if (!canCopyImage()) {
+          var viewBtn = document.createElement("button");
+          viewBtn.className = "btn-small";
+          viewBtn.innerHTML = ICONS.image + "<span>Xem ảnh</span>";
+          viewBtn.onclick = function () { openLightbox(note); };
+          actions.appendChild(viewBtn);
+        }
       }
 
       var spacer = document.createElement("div");
@@ -295,6 +362,20 @@
     var url = publicImageUrl(note.image_path);
     $("lightbox-img").src = url;
     $("lightbox-download").href = url;
+
+    var lbCopy = $("lightbox-copy");
+    lbCopy.hidden = !canCopyImage();
+    lbCopy.onclick = function () {
+      lbCopy.disabled = true;
+      copyImage(note).then(
+        function () { toast("Đã chép ảnh — dán vào Zalo được rồi"); },
+        function (e) {
+          console.error(e);
+          toast("Không chép được ảnh — hãy giữ vào ảnh để lưu");
+        }
+      ).then(function () { lbCopy.disabled = false; });
+    };
+
     $("lightbox").showModal();
   }
 

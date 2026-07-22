@@ -6,22 +6,22 @@
 :root {
   /* Màu (OKLCH gốc trong DESIGN.md, hex để tương thích máy cũ) */
   --bg: #ffffff;
-  --surface: #f7f4f0;
-  --ink: #25211b;
-  --muted: #6d6457;
-  --line: #e5e1da;
-  --brand: #9a6a1f;
-  --brand-deep: #7c5314;
-  --brand-wash: #f6efe3;
-  --danger: #c03d2e;
+  --surface: #f2ede5;
+  --ink: #17140f;          /* gần đen: tương phản 17:1 trên trắng */
+  --muted: #514a3e;        /* đậm hơn: 8.5:1 — người lớn tuổi đọc rõ */
+  --line: #cfc7b8;         /* viền rõ hẳn, không mờ nhạt */
+  --brand: #7a5010;        /* đồng thau đậm: 7.2:1 trên trắng */
+  --brand-deep: #5d3c0a;
+  --brand-wash: #f0e4cd;
+  --danger: #a32718;
   --on-brand: #ffffff;
 
-  /* Chữ */
-  --fs-base: 17px;
-  --fs-title: 1rem;        /* 17px — tiêu đề ghi chú */
-  --fs-body: 0.941rem;     /* 16px */
-  --fs-label: 0.794rem;    /* 13.5px */
-  --fs-header: 1.118rem;   /* 19px */
+  /* Chữ — cỡ lớn, dành cho mắt lớn tuổi */
+  --fs-base: 18px;
+  --fs-title: 1.056rem;    /* 19px — tiêu đề ghi chú */
+  --fs-body: 1rem;         /* 18px */
+  --fs-label: 0.833rem;    /* 15px */
+  --fs-header: 1.222rem;   /* 22px */
 
   /* Nhịp & hình khối */
   --r-block: 12px;
@@ -202,9 +202,9 @@ button { font-family: inherit; }
 
 .note-card {
   background: var(--bg);
-  border: 1px solid var(--line);
+  border: 2px solid var(--line);
   border-radius: var(--r-block);
-  padding: 14px 14px 16px;
+  padding: 15px 15px 17px;
 }
 
 .note-card-top {
@@ -217,7 +217,7 @@ button { font-family: inherit; }
 .note-title {
   margin: 0;
   font-size: var(--fs-title);
-  font-weight: 650;
+  font-weight: 700;
   line-height: 1.35;
   letter-spacing: -0.005em;
   word-break: break-word;
@@ -235,7 +235,7 @@ button { font-family: inherit; }
 }
 .note-content {
   margin: 8px 0 0;
-  color: #454036; /* đậm hơn muted: nội dung là thứ người dùng cần đọc kỹ */
+  color: #2e2a22; /* nội dung là thứ cần đọc kỹ: gần như mực chính */
   font-size: var(--fs-body);
   line-height: 1.5;
   white-space: pre-wrap;
@@ -257,13 +257,23 @@ button { font-family: inherit; }
   display: block;
 }
 
+/* Hàng hành động: chữ nút không bao giờ bị cắt — thà xuống dòng còn hơn.
+   Nút chính chiếm chỗ trước, sửa/xóa đẩy sang phải; chật quá thì tự wrap. */
 .note-actions {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
   margin-top: 14px;
 }
-.note-actions .spacer { flex: 1; }
+.note-actions .spacer {
+  flex: 1 0 auto;
+  min-width: 0;
+}
+.note-actions .btn-copy,
+.note-actions .btn-small { white-space: nowrap; }
+
+.btn-copy:disabled { opacity: 0.55; }
 
 /* ===== Nút ===== */
 

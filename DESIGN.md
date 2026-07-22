@@ -13,16 +13,21 @@ tinh cho tương phản tối đa với chữ mực đậm.
 Chiến lược: **Restrained** — nền trắng tinh + mực gần đen; hổ phách đồng thau là
 accent duy nhất, chỉ dùng cho hành động chính, trạng thái chọn, và nhận diện.
 
-| Role | OKLCH | Hex | Dùng cho |
+Người dùng gồm giám đốc/lễ tân lớn tuổi → **mọi cặp màu đạt tối thiểu 7:1**
+(vượt AAA), không chỉ AA 4.5:1.
+
+| Role | Hex | Tương phản/trắng | Dùng cho |
 |---|---|---|---|
-| bg | oklch(1 0 0) | `#ffffff` | nền trang |
-| surface | oklch(0.972 0.004 68) | `#f7f4f0` | nền chip, nút phụ, khối phụ |
-| ink | oklch(0.24 0.012 68) | `#25211b` | chữ chính, chip đang chọn |
-| muted | oklch(0.52 0.02 68) | `#6d6457` | chữ phụ (≥4.5:1 trên trắng) |
-| line | oklch(0.91 0.006 68) | `#e5e1da` | hairline, viền input |
-| brand | oklch(0.60 0.13 68) | `#9a6a1f` | FAB, nút Chép, chip chọn, link |
-| brand-deep | oklch(0.50 0.115 68) | `#7c5314` | pressed state, chữ brand cỡ nhỏ |
-| danger | oklch(0.55 0.19 25) | `#c03d2e` | xóa, lỗi |
+| bg | `#ffffff` | — | nền trang |
+| surface | `#f2ede5` | — | nền chip, nút phụ |
+| ink | `#17140f` | 18.4:1 | chữ chính |
+| content | `#2e2a22` | 14.3:1 | nội dung ghi chú |
+| muted | `#514a3e` | 8.8:1 | chữ phụ |
+| line | `#cfc7b8` | — | viền khối ghi chú (2px), viền input |
+| brand | `#7a5010` | 7.0:1 | FAB, nút Chép/Chép ảnh, chip chọn |
+| brand-deep | `#5d3c0a` | 9.6:1 | pressed, chữ trên brand-wash |
+| brand-wash | `#f0e4cd` | — | nền nhãn phân loại |
+| danger | `#a32718` | 7.3:1 | xóa, lỗi |
 
 Cấm: gradient text, side-stripe border, glassmorphism, shadow rộng + viền 1px trên
 cùng phần tử.
@@ -30,13 +35,13 @@ cùng phần tử.
 ## Typography
 
 Một họ duy nhất: `system-ui, -apple-system, "Segoe UI", Roboto, sans-serif`.
-Scale cố định (rem), tỉ lệ ~1.15, base 17px:
+Scale cố định (rem), base **18px** (lớn hơn chuẩn — dành cho mắt lớn tuổi):
 
-- Tên không gian (header): 19px / 700
-- Tiêu đề ghi chú: 17px / 650
-- Body / nội dung: 16px / 400, line-height 1.5
-- Nhãn, phân loại, meta: 13.5px / 600
-- Nút: 16px / 650
+- Tên không gian (header): 22px / 700
+- Tiêu đề ghi chú: 19px / 700
+- Body / nội dung: 18px / 400, line-height 1.5
+- Nhãn, phân loại, meta: 15px / 600
+- Nút: 18px / 650
 
 `text-wrap: balance` cho tiêu đề. Không display font, không fluid clamp.
 
@@ -44,8 +49,11 @@ Scale cố định (rem), tỉ lệ ~1.15, base 17px:
 
 - **Header**: sticky, nền trắng, hairline dưới; chấm vuông bo brand + tên không gian.
 - **Chip phân loại**: pill 40px, surface + viền line; active = brand nền, chữ trắng.
-- **Note item**: KHÔNG card đổ bóng — khối trắng phân tách bằng hairline, radius 12px
-  khi cần nhóm. Hành động chính "Chép" = nút brand đặc, 44px. Sửa/Xóa = icon button 44px.
+- **Note item**: khối trắng bo 12px, **viền 2px** `--line` để mảng nội dung nổi rõ
+  (không đổ bóng). Hành động chính = nút brand đặc, 44px: "Chép" khi có text,
+  "Chép ảnh" khi có ảnh (chép PNG vào clipboard để dán thẳng Zalo). Sửa/Xóa =
+  icon button 44px đẩy sang phải. Hàng nút được phép wrap — **chữ nút không bao
+  giờ bị cắt ngắn**, kể cả màn 320px. Bấm thẳng vào ảnh để xem to (không cần nút riêng).
 - **Bottom sheet** (thêm/sửa): `<dialog>` dính đáy màn hình, radius 16px góc trên,
   grabber, trượt lên 220ms ease-out-quint. Input 48px, font 16px, focus ring brand.
 - **Skeleton** khi tải: thanh shimmer thay cho spinner/emoji.
