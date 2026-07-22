@@ -24,8 +24,7 @@ const MIME = {
 
 function send(res, status, headers, body) {
   res.writeHead(status, headers);
-  if (body) res.end(body);
-  else res.end();
+  res.end(body);
 }
 
 const server = http.createServer((req, res) => {
@@ -62,8 +61,15 @@ const server = http.createServer((req, res) => {
       headers["Cache-Control"] = "no-cache";
     }
 
-    send(res, 200, headers);
-    fs.createReadStream(filePath).pipe(res);
+    headers["Content-Length"] = stat.size;
+    res.writeHead(200, headers);
+
+    // HEAD chỉ cần header, không cần nội dung
+    if (req.method === "HEAD") return res.end();
+
+    const stream = fs.createReadStream(filePath);
+    stream.on("error", () => res.destroy());
+    stream.pipe(res);
   });
 });
 
